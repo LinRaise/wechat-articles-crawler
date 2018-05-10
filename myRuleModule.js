@@ -1,4 +1,4 @@
-const Koa = require('Koa');
+﻿const Koa = require('Koa');
 const Router = require('koa-router');
 const fs = require('fs');
 const ip = require('ip').address();
@@ -37,6 +37,8 @@ let wechatIo = io.of('/wechat'), resultIo = io.of('/result');
 wechatIo.on('connection', function (socket) {
 
 	socket.on('crawler', (crawData) => {
+		if (articles.length <= index)
+			return;
 		crawData.crawTime = moment().format('YYYY-MM-DD HH:mm');
 
 		let newData = Object.assign({
@@ -62,6 +64,8 @@ wechatIo.on('connection', function (socket) {
 	});
 
 	socket.on('noData', (crawData) => {
+		if (articles.length <= index)
+			return;
 		console.warn(' 超时没有爬取到？ url: ', articles[index].content_url);
 
 		index++;
@@ -219,19 +223,23 @@ function fetchListEnd_StartArticle() {
 	console.log('最终获取文章的列表总数： ', articles.length);
 
 	var fs = require("fs");
-
-	fs.writeFile('output.txt', JSON.stringify(articles, null, "\t"), function (err) {
+	var article = articles.find((v) => {
+			return v.author !== '';
+		});
+	var outputfile = article.author + ".txt";
+	fs.writeFile(outputfile, JSON.stringify(articles, null, "\t"), function (err) {
 		if (err) {
 			return console.error(err);
 		}
-		console.log("数据写入成功！" + process.cwd() + '\\output.txt');
-		});
+		console.log("数据写入成功！" + process.cwd() + '\\' + outputfile);
+	});
 
 	wechatIo.emit('url', {
 		url: articles[0].content_url,
 		index: 0,
 		total: articles.length
 	});
+	resetData();
 }
 
 function resetData() {
