@@ -60,6 +60,7 @@ wechatIo.on('connection', function (socket) {
 			});
 		} else {
 			socket.emit('end', {});
+			resetData();
 		}
 	});
 
@@ -77,6 +78,7 @@ wechatIo.on('connection', function (socket) {
 			});
 		} else {
 			socket.emit('end', {});
+			resetData();
 		}
 	});
 
@@ -91,7 +93,7 @@ var articleInjectJsFile = fs.readFileSync('./articleInjectJs.js', 'utf-8').repla
 var injectJs = `<script id="injectJs" type="text/javascript">${injectJsFile}</script>`;
 var articleInjectJs = `<script id="injectJs" type="text/javascript">${articleInjectJsFile}</script>`;
 var fakeImg = fs.readFileSync('./fake.png');
-const maxLength = 3000;
+const maxLength = 6000;
 module.exports = {
 	summary: 'wechat articles crawler',
 	 * beforeSendRequest(requestDetail) {
